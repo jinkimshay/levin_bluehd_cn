@@ -113,6 +113,11 @@ class Userinfo extends ApiBase
 			$vin = \base64_decode($vin);
 			$token = $data['token'];
 			$willVin = 1001;
+			
+			$this->apiUrl = 'https://carapptest.gtmc.com.cn';
+			$this->contentType = 'application/json';
+			return $this->apiReturn(json_decode($this->verifyPerson($phone, $token, $vin), true));
+			
 			// $url = 'https://carapp.gtmc.com.cn/appservice/api/action/UserInfoAction/checkUserTokenAndPhoneAndVin.json'; // 正式环境接口
 			$url = 'https://carapptest.gtmc.com.cn/appservice/api/action/UserInfoAction/checkUserTokenAndPhoneAndVin.json'; // 测试环境接口
 			$appId = '206';
@@ -503,6 +508,5 @@ class Userinfo extends ApiBase
 					// 回滚事务
 					Db::rollback();
 			}
-			
 		}
 }

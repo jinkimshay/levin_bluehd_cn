@@ -25,7 +25,9 @@ class Userinfo extends ApiBase
 			$data = $this->param;
 			$username = $data['user'];
 			$phone = $data['tel'];
+			$phone = \base64_decode($phone) / 8;
 			$vin = $data['vin'];
+			$vin = \base64_decode($vin);
 			$where['lv_vin'] = $vin;
 			
 			$data = [
@@ -54,6 +56,7 @@ class Userinfo extends ApiBase
 			$data = $this->param;
 			
 			$vin = $data['vin'];
+			$vin = \base64_decode($vin);
 			
 			$where['lv_vin'] = $vin;
 			
@@ -74,6 +77,7 @@ class Userinfo extends ApiBase
 		{
 			$data = $this->param;
 			$vin = $data['vin'];
+			$vin = \base64_decode($vin);
 			$where['lv_vin'] = $vin;
 			$re = $this->logicUserinfo->getUserInfo($where);
 			
@@ -98,12 +102,47 @@ class Userinfo extends ApiBase
 		}
 		
 		/**
+		 * 验证用户真实性
+		 */
+		public function verifyPerson()
+		{
+			$data = $this->param;
+			$phone = $data['tel'];
+			$vin = $data['vin'];
+			$phone = \base64_decode($phone) / 8;
+			$vin = \base64_decode($vin);
+			$token = $data['token'];
+			$willVin = 1001;
+			// $url = 'https://carapp.gtmc.com.cn/appservice/api/action/UserInfoAction/checkUserTokenAndPhoneAndVin.json'; // 正式环境接口
+			$url = 'https://carapptest.gtmc.com.cn/appservice/api/action/UserInfoAction/checkUserTokenAndPhoneAndVin.json'; // 测试环境接口
+			$appId = '206';
+			$key = '2bc60e14282dd5juyt73b36e9b2epoi7d';
+			$nonce = \rand(0, 9999);
+			$timestamp = \time();
+			$str = $key.$nonce.$timestamp;
+			$signature = \sha1($str);
+			$signature = \strtoupper($signature);
+			$params = [
+				'signature' => $signature,
+				'appId' => $appId,
+				'nonce' => $nonce,
+				'timestamp' => $timestamp,
+				'phone' => $phone,
+				'vin' => $vin,
+				'willVin' => $willVin,
+				'token' => $token
+			];
+			return $this->apiReturn(json_decode($this->http_post($url,$params), true));
+		}
+		
+		/**
 		 * 优惠券发放
 		 */
 		public function sendCoupon()
 		{
 			$data = $this->param;
 			$phone = $data['tel'];
+			$phone = \base64_decode($phone) / 8;
 			$_type = $data['type'];
 			$couponBatchs = '';
 			if($_type == 1){
@@ -124,7 +163,6 @@ class Userinfo extends ApiBase
           	// $key = '1aw20f93uy69ui8u4326f10b37412auw';
 			$nonce = \rand(0, 9999);
 			$timestamp = \time();
-			// $phone = '13636683620';
 			$numbers = 1;
 			$str = $key.$nonce.$timestamp;
 			$signature = \sha1($str);
@@ -149,6 +187,7 @@ class Userinfo extends ApiBase
 		{
 			$data = $this->param;
 			$phone = $data['tel'];
+			$phone = \base64_decode($phone) / 8;
 			$msgContent = $data['msg'];
 			
 			$url = 'https://carapp.gtmc.com.cn/appservice/api/action/UserInfoAction/pushMessageToUser.json'; // 正式环境接口
@@ -158,7 +197,6 @@ class Userinfo extends ApiBase
 			$nonce = \rand(0, 9999);
 			$timestamp = \time();
 			$sendWay = 2;
-			// $phone = '13636683620';
 			$signature = \sha1($key.$nonce.$timestamp);
 			$signature = \strtoupper($signature);
 
@@ -181,6 +219,7 @@ class Userinfo extends ApiBase
 		{
 			$data = $this->param;
 			$vin = $data['vin'];
+			$vin = \base64_decode($vin);
 			$userId = $data['userId'];
 			$url = 'https://carapptest.gtmc.com.cn/api/vhcNet/vhcSync/queryVhcStatus'; // 测试环境接口
 			$appId = '206';
@@ -213,6 +252,8 @@ class Userinfo extends ApiBase
 			$vin = $data['vin'];
 			$userId = $data['userId'];
 			$phone = $data['phone'];
+			$vin = \base64_decode($vin);
+			$phone = \base64_decode($phone) / 8;
 			$url = 'https://carapptest.gtmc.com.cn/api/vhcNet/vhcSync/getCarCodeByVinAndPhone'; // 测试环境接口
 			$appId = '206';
 			$key = 'uw4l0e14282dd5c10673b36e9b2e8866';
@@ -244,8 +285,10 @@ class Userinfo extends ApiBase
 		{
 			$data = $this->param;
 			$phone = $data['tel'];
+			$phone = \base64_decode($phone) / 8;
 			$vin = $data['vin'];
-			
+			$vin = \base64_decode($vin);
+
 			$appId = '1011';
 			$incValue = 2000;
 			$staffCode = $phone;
@@ -400,6 +443,7 @@ class Userinfo extends ApiBase
 			$data = $this->param;
 			
 			$vin = $data['vin'];
+			$vin = \base64_decode($vin);
 					
 			$where['lv_vin'] = $vin;
 			

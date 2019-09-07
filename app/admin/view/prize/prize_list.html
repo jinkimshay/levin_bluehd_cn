@@ -1,0 +1,36 @@
+<div class="box">
+  <div class="box-body table-responsive">
+    <table  class="table table-bordered table-hover">
+      <thead>
+      <tr>
+          <th>ID</th>
+          <th>奖品名称</th>
+          <th>奖品总数</th>
+          <th>剩余数量</th>
+          <th>已中数量</th>
+      </tr>
+      </thead>
+      
+      {notempty name='list'}
+        <tbody>
+            {volist name='list' id='vo'}
+                <tr>
+                  <td>{$vo.id}</td>
+                  <td>{$vo.prize}</td>
+                  <td>{$vo.all_num}</td>
+                  <td>{$vo.surplus_num}</td>
+                  <td>{$vo.ready_num}</td>
+                </tr>
+            {/volist}
+        </tbody>
+        {else/}
+        <tbody><tr class="odd"><td colspan="5" class="text-center" valign="top">{:config('empty_list_describe')}</td></tr></tbody>
+      {/notempty}
+    </table>
+  </div>
+
+  <div class="box-footer clearfix text-center">
+      {$list->render()}
+  </div>
+
+</div>

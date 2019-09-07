@@ -1,0 +1,90 @@
+<div class="box">
+	<div class="box-header">
+		<div class="row">
+				<div class="col-sm-4">
+						<ob_link><a class="btn export" url="{:url('exportUserList')}?search_data={:input('search_data')}&begin_time={:input('begin_time')}&end_time={:input('end_time')}&prize={$prize}"><i class="fa fa-download"></i> 导 出</a></ob_link>
+				</div>
+				
+				<div class="col-sm-8">
+						<div class="box-tools search-form pull-right">
+								<div class="input-group input-group-sm">
+										<input type="text" name="search_data" style="width: 200px;" class="form-control pull-right" value="{:input('search_data')}" placeholder="支持用户APP手机号">
+										<input type="date" name="end_time" style="width: 200px;" class="form-control pull-right" >
+										<input type="date" name="begin_time" style="width: 200px;" class="form-control pull-right" >
+										{if ($prize != 0)}
+										<select name="prize_num" style="width: 200px;margin-right: 8px;" class="form-control pull-right">
+											<option value="0">请选择奖品</option>
+											<option value="1" {if (input('prize_num') == 1)} selected="selected" {/if}>Surface Pro 6（128G）</option>
+											<option value="2" {if (input('prize_num') == 2)} selected="selected" {/if}>华为P30（8+256G）</option>
+											<option value="3" {if (input('prize_num') == 3)} selected="selected" {/if}>BOSE QC30</option>
+											<option value="4" {if (input('prize_num') == 4)} selected="selected" {/if}>300保养代金券</option>
+											<option value="5" {if (input('prize_num') == 5)} selected="selected" {/if}>200保养代金券</option>
+											<option value="6" {if (input('prize_num') == 6)} selected="selected" {/if}>100保养代金券</option>
+											<option value="7" {if (input('prize_num') == 7)} selected="selected" {/if}>饭团周边</option>
+											<option value="8" {if (input('prize_num') == 8)} selected="selected" {/if}>2000丰云能量</option>
+										</select>
+										{/if}
+										<div class="input-group-btn">
+											{if ($prize != 0)}<button type="button" id="search" url="{:url('user_list')}" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>{/if}
+											{if ($prize == 0)}<button type="button" id="search" url="{:url('user_no_prize')}" class="btn btn-info btn-flat"><i class="fa fa-search"></i></button>{/if}
+										</div>
+								</div>
+					 </div>
+				</div>
+		</div>
+	</div>
+		
+	<div class="box-body table-responsive">
+		<table  class="table table-bordered table-hover">
+			<thead>
+			<tr>
+					<th>APP会员名</th>
+					<th>APP会员电话</th>
+					<th>APP VIN值</th>
+					{if ($prize != 0)}<th>留资姓名</th>{/if}
+					{if ($prize != 0)}<th>留资电话</th>{/if}
+					{if ($prize != 0)}<th>留资地址</th>{/if}
+					{if ($prize != 0)}<th>中奖奖品</th>{/if}
+					<th>首次进入时间</th>
+					{if ($prize != 0)}<th>中奖时间</th>{/if}
+			</tr>
+			</thead>
+			
+			{notempty name='list'}
+				<tbody>
+						{volist name='list' id='vo'}
+								<tr>
+									<td>{$vo.username}</td>
+									<td>{$vo.phone}</td>
+									<td>{$vo.lv_vin}</td>
+									{if ($prize != 0)}<td>{$vo.lv_user_name}</td>{/if}
+									{if ($prize != 0)}<td>{$vo.lv_user_tel}</td>{/if}
+									{if ($prize != 0)}<td>{$vo.lv_user_addr}</td>{/if}
+									{if ($prize != 0)}<td>{$vo.prizename}</td>{/if}
+									<td>{$vo.create_time}</td>
+									{if ($prize != 0)}<td>{$vo.update_time}</td>{/if}
+								</tr>
+						{/volist}
+				</tbody>
+				{else/}
+				<tbody><tr class="odd"><td colspan="8" class="text-center" valign="top">{:config('empty_list_describe')}</td></tr></tbody>
+			{/notempty}
+		</table>
+	</div>
+	
+	<div class="box-body clearfix text-left">
+		当前{if ($prize == 0)}未{/if}中奖数：&nbsp;&nbsp;&nbsp; {$count}
+	</div>
+	
+	<div class="box-footer clearfix text-center">
+			{$list->render()}
+	</div>
+</div>
+
+<script>
+		//导出功能
+		$(".export").click(function(){
+				
+				window.location.href = searchFormUrl($(".export"));
+		});
+</script>

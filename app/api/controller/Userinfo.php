@@ -175,6 +175,68 @@ class Userinfo extends ApiBase
 		}
 		
 		/**
+		 * 验证车联网开通状态
+		 */
+		public function getCarWhetherOpen()
+		{
+			$data = $this->param;
+			$vin = $data['vin'];
+			$userId = $data['userId'];
+			$url = 'https://carapptest.gtmc.com.cn/api/vhcNet/vhcSync/queryVhcStatus'; // 测试环境接口
+			$appId = '206';
+			$key = 'uw4l0e14282dd5c10673b36e9b2e8866';
+			$nonce = \rand(100000, 999999);
+			$timestamp = \time();
+			// 加密
+			$signature = \sha1($key.$nonce.$timestamp);
+			$signature = \strtoupper($signature);
+			// 参数组合
+			$params = [  
+				'signature' => $signature,
+				'appId' => $appId,
+				'nonce' => $nonce,
+				'timestamp' => $timestamp,
+				'vin' => $vin,
+				'userId' => $userId
+			];
+			
+			// 返回
+			return $this->apiReturn(json_decode($this->http_post_header($url,$params), true));
+		}
+		
+		/**
+		 * 验证262车主
+		 */
+		public function getCarWhetherPerson()
+		{
+			$data = $this->param;
+			$vin = $data['vin'];
+			$userId = $data['userId'];
+			$phone = $data['phone'];
+			$url = 'https://carapptest.gtmc.com.cn/api/vhcNet/vhcSync/getCarCodeByVinAndPhone'; // 测试环境接口
+			$appId = '206';
+			$key = 'uw4l0e14282dd5c10673b36e9b2e8866';
+			$nonce = \rand(100000, 999999);
+			$timestamp = \time();
+			// 加密
+			$signature = \sha1($key.$nonce.$timestamp);
+			$signature = \strtoupper($signature);
+			// 参数组合
+			$params = [  
+				'signature' => $signature,
+				'appId' => $appId,
+				'nonce' => $nonce,
+				'timestamp' => $timestamp,
+				'vin' => $vin,
+				'phone' => $phone,
+				'userId' => $userId
+			];
+			
+			// 返回
+			return $this->apiReturn(json_decode($this->http_post_header($url,$params), true));
+		}
+		
+		/**
 		 * 能量发放调用接口
 		 * @param {string} $phone 电话号码
 		 */
@@ -260,6 +322,46 @@ class Userinfo extends ApiBase
           $headers = array(
               "token:1111111111111",
               "over_time:22222222222",
+          );
+          //初始化
+          $curl = curl_init();
+          //设置抓取的url
+          curl_setopt($curl, CURLOPT_URL, $durl);
+          //设置头文件的信息作为数据流输出
+          curl_setopt($curl, CURLOPT_HEADER, false);
+          //设置获取的信息以文件流的形式返回，而不是直接输出。
+          curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+          //设置post方式提交
+          curl_setopt($curl, CURLOPT_POST, true);
+          // 设置post请求参数
+          curl_setopt($curl, CURLOPT_POSTFIELDS, $post_data);
+          // 添加头信息
+          curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+          // CURLINFO_HEADER_OUT选项可以拿到请求头信息
+          curl_setopt($curl, CURLINFO_HEADER_OUT, true);
+          // 不验证SSL
+          curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+          curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+          //执行命令
+          $data = curl_exec($curl);
+          // 打印请求头信息
+  //        echo curl_getinfo($curl, CURLINFO_HEADER_OUT);
+          //关闭URL请求
+          curl_close($curl);
+          //显示获得的数据
+          return $data;
+		}
+		
+		/**
+		 * POST方式
+		 */
+		public function http_post_header($durl, $post_data)
+		{
+			// header传送格式
+          $headers = array(
+              "Content-Type: application/json",
+							"Host: carapptest.gtmc.com.cn",
+							"Cache-Control: no-cache",
           );
           //初始化
           $curl = curl_init();
